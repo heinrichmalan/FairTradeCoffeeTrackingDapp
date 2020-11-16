@@ -3,9 +3,16 @@ import "../coffeeaccesscontrol/ConsumerRole.sol";
 import "../coffeeaccesscontrol/DistributorRole.sol";
 import "../coffeeaccesscontrol/FarmerRole.sol";
 import "../coffeeaccesscontrol/RetailerRole.sol";
+import "../coffeecore/Ownable.sol";
 
 // Define a contract 'Supplychain'
-contract SupplyChain {
+contract SupplyChain is
+    Ownable,
+    ConsumerRole,
+    DistributorRole,
+    FarmerRole,
+    RetailerRole
+{
     // Define 'owner'
     address owner;
 
@@ -64,12 +71,6 @@ contract SupplyChain {
     event Shipped(uint256 upc);
     event Received(uint256 upc);
     event Purchased(uint256 upc);
-
-    // Define a modifer that checks to see if msg.sender == owner of the contract
-    modifier onlyOwner() {
-        require(msg.sender == owner);
-        _;
-    }
 
     // Define a modifer that verifies the Caller
     modifier verifyCaller(address _address) {
@@ -188,7 +189,7 @@ contract SupplyChain {
         string _originFarmLatitude,
         string _originFarmLongitude,
         string _productNotes
-    ) public {
+    ) public onlyFarmer() {
         // Add the new item as part of Harvest
 
         items[_upc] = Item({
@@ -269,6 +270,8 @@ contract SupplyChain {
         paidEnough(items[_upc].productPrice)
         // Call modifer to send any excess ether back to buyer
         checkValue(_upc)
+        // Check that only a distributor can buy an item
+        onlyDistributor()
     {
         // Update the appropriate fields - ownerID, distributorID, itemState
         items[_upc].ownerID = msg.sender;
@@ -301,7 +304,8 @@ contract SupplyChain {
         public
         // Call modifier to check if upc has passed previous supply chain stage
         shipped(_upc)
-    // Access Control List enforced by calling Smart Contract / DApp
+        // Access Control List enforced by calling Smart Contract / DApp
+        onlyRetailer()
     {
         // Update the appropriate fields - ownerID, retailerID, itemState
         items[_upc].ownerID = msg.sender;
