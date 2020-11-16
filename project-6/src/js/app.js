@@ -165,6 +165,8 @@ App = {
 
     harvestItem: function (event) {
         event.preventDefault();
+        App.readForm();
+        $("#farmer-errors").css({ display: "none" });
         var processId = parseInt($(event.target).data("id"));
 
         App.contracts.SupplyChain.deployed()
@@ -180,16 +182,20 @@ App = {
                 );
             })
             .then(function (result) {
-                $("#ftc-item").text(result);
+                // $("#ftc-item").text(result);
                 console.log("harvestItem", result);
             })
             .catch(function (err) {
+                $("#farmer-errors").text(
+                    "Contract Error: Caller is probably not the farmer"
+                );
                 console.log(err.message);
             });
     },
 
     processItem: function (event) {
         event.preventDefault();
+        $("#farmer-errors").css({ display: "none" });
         var processId = parseInt($(event.target).data("id"));
 
         App.contracts.SupplyChain.deployed()
@@ -199,16 +205,20 @@ App = {
                 });
             })
             .then(function (result) {
-                $("#ftc-item").text(result);
+                // $("#ftc-item").text(result);
                 console.log("processItem", result);
             })
             .catch(function (err) {
+                $("#farmer-errors").text(
+                    "Contract Error: Item is probably not harvested"
+                );
                 console.log(err.message);
             });
     },
 
     packItem: function (event) {
         event.preventDefault();
+        $("#farmer-errors").css({ display: "none" });
         var processId = parseInt($(event.target).data("id"));
 
         App.contracts.SupplyChain.deployed()
@@ -218,16 +228,20 @@ App = {
                 });
             })
             .then(function (result) {
-                $("#ftc-item").text(result);
+                // $("#ftc-item").text(result);
                 console.log("packItem", result);
             })
             .catch(function (err) {
+                $("#farmer-errors").text(
+                    "Contract Error: Item is probably not processed"
+                );
                 console.log(err.message);
             });
     },
 
     sellItem: function (event) {
         event.preventDefault();
+        $("#farmer-errors").css({ display: "none" });
         var processId = parseInt($(event.target).data("id"));
 
         App.contracts.SupplyChain.deployed()
@@ -239,16 +253,21 @@ App = {
                 });
             })
             .then(function (result) {
-                $("#ftc-item").text(result);
+                // $("#ftc-item").text(result);
                 console.log("sellItem", result);
             })
             .catch(function (err) {
+                $("#farmer-errors").text(
+                    "Contract Error: Item is probably not packed"
+                );
+                $("#farmer-errors").css({ display: "block" });
                 console.log(err.message);
             });
     },
 
     buyItem: function (event) {
         event.preventDefault();
+        $("#product-errors").css({ display: "none" });
         var processId = parseInt($(event.target).data("id"));
 
         App.contracts.SupplyChain.deployed()
@@ -260,16 +279,21 @@ App = {
                 });
             })
             .then(function (result) {
-                $("#ftc-item").text(result);
+                // $("#ftc-item").text(result);
                 console.log("buyItem", result);
             })
             .catch(function (err) {
+                $("#product-errors").text(
+                    "Contract Error: Item is probably not for sale"
+                );
+                $("#product-errors").css({ display: "block" });
                 console.log(err.message);
             });
     },
 
     shipItem: function (event) {
         event.preventDefault();
+        $("#product-errors").css({ display: "none" });
         var processId = parseInt($(event.target).data("id"));
 
         App.contracts.SupplyChain.deployed()
@@ -279,16 +303,21 @@ App = {
                 });
             })
             .then(function (result) {
-                $("#ftc-item").text(result);
+                // $("#ftc-item").text(result);
                 console.log("shipItem", result);
             })
             .catch(function (err) {
+                $("#product-errors").text(
+                    "Contract Error: Item is probably not sold"
+                );
+                $("#product-errors").css({ display: "block" });
                 console.log(err.message);
             });
     },
 
     receiveItem: function (event) {
         event.preventDefault();
+        $("#product-errors").css({ display: "none" });
         var processId = parseInt($(event.target).data("id"));
 
         App.contracts.SupplyChain.deployed()
@@ -298,16 +327,21 @@ App = {
                 });
             })
             .then(function (result) {
-                $("#ftc-item").text(result);
+                // $("#ftc-item").text(result);
                 console.log("receiveItem", result);
             })
             .catch(function (err) {
+                $("#product-errors").text(
+                    "Contract Error: Item is probably not shipped"
+                );
+                $("#product-errors").css({ display: "block" });
                 console.log(err.message);
             });
     },
 
     purchaseItem: function (event) {
         event.preventDefault();
+        $("#product-errors").css({ display: "none" });
         var processId = parseInt($(event.target).data("id"));
 
         App.contracts.SupplyChain.deployed()
@@ -317,12 +351,35 @@ App = {
                 });
             })
             .then(function (result) {
-                $("#ftc-item").text(result);
+                // $("#ftc-item").text(result);
                 console.log("purchaseItem", result);
             })
             .catch(function (err) {
+                $("#product-errors").text(
+                    "Contract Error: Item is probably not received"
+                );
+                $("#product-errors").css({ display: "block" });
                 console.log(err.message);
             });
+    },
+
+    parseItemOne: function (data) {
+        const fields = [
+            "SKU",
+            "UPC",
+            "ownerID",
+            "originFarmerID",
+            "originFarmerName",
+            "originFarmInformation",
+            "originFarmLatitude",
+            "originFarmLongitude",
+        ];
+        let parsed = "";
+        for (let i in data) {
+            parsed += `${fields[i]}: ${data[i]}<br/>`;
+        }
+
+        return parsed;
     },
 
     fetchItemBufferOne: function () {
@@ -336,12 +393,32 @@ App = {
                 return instance.fetchItemBufferOne(App.upc);
             })
             .then(function (result) {
-                $("#ftc-item").text(result);
+                $("#ftc-item").html(App.parseItemOne(result));
                 console.log("fetchItemBufferOne", result);
             })
             .catch(function (err) {
                 console.log(err.message);
             });
+    },
+
+    parseItemTwo: function (data) {
+        const fields = [
+            "SKU",
+            "UPC",
+            "productID",
+            "productNotes",
+            "productPrice",
+            "itemState",
+            "distributorID",
+            "retailerID",
+            "consumerID",
+        ];
+        let parsed = "";
+        for (let i in data) {
+            parsed += `${fields[i]}: ${data[i]}<br/>`;
+        }
+
+        return parsed;
     },
 
     fetchItemBufferTwo: function () {
@@ -353,7 +430,7 @@ App = {
                 return instance.fetchItemBufferTwo.call(App.upc);
             })
             .then(function (result) {
-                $("#ftc-item").text(result);
+                $("#ftc-item").html(App.parseItemTwo(result));
                 console.log("fetchItemBufferTwo", result);
             })
             .catch(function (err) {
