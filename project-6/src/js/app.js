@@ -413,9 +413,28 @@ App = {
             "retailerID",
             "consumerID",
         ];
+
+        const STATE_MAP = [
+            "Harvested",
+            "Processed",
+            "Packed",
+            "For Sale",
+            "Bought",
+            "Shipped",
+            "Received",
+            "Purchased",
+        ];
+
         let parsed = "";
         for (let i in data) {
-            parsed += `${fields[i]}: ${data[i]}<br/>`;
+            let field = fields[i];
+            let value = data[i];
+
+            if (field === "itemState") {
+                value = STATE_MAP[value];
+            }
+
+            parsed += `${fields[i]}: ${value}<br/>`;
         }
 
         return parsed;
