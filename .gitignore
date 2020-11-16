@@ -1,1 +1,3 @@
 node_modules
+.secret
+project6/build/*
