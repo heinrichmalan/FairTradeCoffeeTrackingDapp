@@ -5,12 +5,7 @@ import "../coffeeaccesscontrol/FarmerRole.sol";
 import "../coffeeaccesscontrol/RetailerRole.sol";
 
 // Define a contract 'Supplychain'
-contract SupplyChain is
-    ConsumerRole,
-    DistributorRole,
-    FarmerRole,
-    RetailerRole
-{
+contract SupplyChain {
     // Define 'owner'
     address owner;
 
@@ -227,7 +222,6 @@ contract SupplyChain is
         // Call modifier to verify caller of this function
         verifyCaller(items[_upc].originFarmerID)
     {
-        require(isFarmer(msg.sender));
         // Update the appropriate fields
         items[_upc].itemState = State.Processed;
         // Emit the appropriate event
@@ -242,7 +236,6 @@ contract SupplyChain is
         // Call modifier to verify caller of this function
         verifyCaller(items[_upc].originFarmerID)
     {
-        require(isFarmer(msg.sender));
         // Update the appropriate fields
         items[_upc].itemState = State.Packed;
         // Emit the appropriate event
@@ -257,7 +250,6 @@ contract SupplyChain is
         // Call modifier to verify caller of this function
         verifyCaller(items[_upc].originFarmerID)
     {
-        require(isFarmer(msg.sender));
         // Update the appropriate fields
         items[_upc].itemState = State.ForSale;
         items[_upc].productPrice = _price;
@@ -278,7 +270,6 @@ contract SupplyChain is
         // Call modifer to send any excess ether back to buyer
         checkValue(_upc)
     {
-        require(isDistributor(msg.sender));
         // Update the appropriate fields - ownerID, distributorID, itemState
         items[_upc].ownerID = msg.sender;
         items[_upc].itemState = State.Sold;
@@ -298,7 +289,6 @@ contract SupplyChain is
         // Call modifier to verify caller of this function
         verifyCaller(items[_upc].distributorID)
     {
-        require(isDistributor(msg.sender));
         // Update the appropriate fields
         items[_upc].itemState = State.Shipped;
         // Emit the appropriate event
@@ -313,7 +303,6 @@ contract SupplyChain is
         shipped(_upc)
     // Access Control List enforced by calling Smart Contract / DApp
     {
-        require(isRetailer(msg.sender));
         // Update the appropriate fields - ownerID, retailerID, itemState
         items[_upc].ownerID = msg.sender;
         items[_upc].retailerID = msg.sender;
@@ -330,7 +319,6 @@ contract SupplyChain is
         received(_upc)
     // Access Control List enforced by calling Smart Contract / DApp
     {
-        require(isConsumer(msg.sender));
         // Update the appropriate fields - ownerID, consumerID, itemState
         items[_upc].ownerID = msg.sender;
         items[_upc].consumerID = msg.sender;
